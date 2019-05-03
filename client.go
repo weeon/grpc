@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/weeon/contract"
 	"google.golang.org/grpc"
@@ -11,7 +12,7 @@ import (
 
 var (
 	ServiceNameNotFound = errors.New("Service Name Not Found ")
-	grpcAddrsKey        = "grpc_addrs"
+	grpcAddrsKeyFormat  = "%s_grpc_addrs"
 )
 
 type ClientManager struct {
@@ -29,8 +30,8 @@ func (c *ClientManager) GetGrpcConn(ctx context.Context, name string) (*grpc.Cli
 	return conn, err
 }
 
-func NewClientManager(ctx context.Context, config contract.Config) (*ClientManager, error) {
-	b, err := config.Get(grpcAddrsKey)
+func NewClientManager(ctx context.Context, namespace string, config contract.Config) (*ClientManager, error) {
+	b, err := config.Get(fmt.Sprintf(grpcAddrsKeyFormat, namespace))
 	if err != nil {
 		return nil, err
 	}
